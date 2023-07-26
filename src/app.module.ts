@@ -5,14 +5,14 @@ import { AuthModule } from './auth/auth.module';
 import { DbModule } from './db/db.module';
 import { ConfigModule } from '@nestjs/config';
 
-import configuration from './config/configuration';
+import databaseConfig from './config/databaseConfig';
 
 @Module({
   imports: [
     AuthModule,
     DbModule,
     ConfigModule.forRoot({
-      load: [configuration],
+      load: [databaseConfig],
     }),
   ],
   controllers: [AppController],
