@@ -4,11 +4,17 @@ import { ApiResponse } from 'src/common/api-response';
 import { PG_CONNECTION } from 'src/constants/constants';
 import { RegisterAccountDTO, SignInAccountDTO } from 'src/dto/auth.dto';
 import { castToArray, comparePasswords, hashPassword } from 'src/utils';
-import { GetCustomerDTO } from 'src/dto/customer.dto';
+import { CustomerDTO } from 'src/dto/customer.dto';
+import { generateAccessToken } from 'src/utils/jwt.utils';
+import { JwtService } from '@nestjs/jwt';
+import { castSignInDTO } from 'src/common/casts/auth.cast';
 
 @Injectable()
 export class AuthService {
-  constructor(@Inject(PG_CONNECTION) private readonly conn: Connection) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    @Inject(PG_CONNECTION) private readonly conn: Connection,
+  ) {}
 
   async signUp(body: RegisterAccountDTO) {
     const { firstName, lastName, email, password } = body;
@@ -22,7 +28,7 @@ export class AuthService {
     try {
       const response = await this.conn.query(query);
       if (response) {
-        return new ApiResponse<number>(
+        return new ApiResponse<any>(
           HttpStatus.CREATED,
           'Account created successfully',
           null,
@@ -30,7 +36,7 @@ export class AuthService {
       }
     } catch (e) {
       throw new HttpException(
-        new ApiResponse<number>(
+        new ApiResponse<any>(
           HttpStatus.INTERNAL_SERVER_ERROR,
           'Error creating account',
           null,
@@ -47,7 +53,7 @@ export class AuthService {
 
     try {
       const [rows] = await this.conn.query(query);
-      const res: SignInAccountDTO[] = castToArray(rows);
+      const res: SignInAccountDTO[] = castToArray(rows).map(castSignInDTO);
       if (res.length > 0) {
         const hashedPassword = res[0].password;
         const isPasswordMatched = await comparePasswords(
@@ -55,16 +61,21 @@ export class AuthService {
           hashedPassword,
         );
         if (isPasswordMatched) {
-          return new ApiResponse<GetCustomerDTO>(
+          const token = generateAccessToken(this.jwtService, {
+            user: res[0],
+          });
+
+          return new ApiResponse<string>(
             HttpStatus.OK,
             'Login successful',
-            res[0],
+            token,
           );
         }
       }
     } catch (e) {
+      console.error('ERR', e);
       throw new HttpException(
-        new ApiResponse<GetCustomerDTO>(
+        new ApiResponse<CustomerDTO>(
           HttpStatus.INTERNAL_SERVER_ERROR,
           'Error logging in',
           null,

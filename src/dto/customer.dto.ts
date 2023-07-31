@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { BaseDTO } from './base.dto';
 
-export class GetCustomerDTO extends BaseDTO {
+export class CustomerDTO extends BaseDTO {
   @IsOptional()
   @IsOptional()
   id?: number;
@@ -20,5 +20,9 @@ export class GetCustomerDTO extends BaseDTO {
 
   @IsOptional()
   @IsString()
-  token?: string;
+  addedAt?: string;
+
+  @IsOptional()
+  @IsString()
+  updatedAt?: string;
 }

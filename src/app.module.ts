@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DbModule } from './db/db.module';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from './jwt/jwt.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 import databaseConfig from './config/databaseConfig';
 
@@ -14,6 +16,8 @@ import databaseConfig from './config/databaseConfig';
     ConfigModule.forRoot({
       load: [databaseConfig],
     }),
+    JwtModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
