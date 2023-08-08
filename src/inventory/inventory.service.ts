@@ -2,8 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Connection } from 'mysql2/promise';
 import { ApiResponse } from 'src/common/api-response';
 import { PG_CONNECTION } from 'src/constants/constants';
-import { CustomerDTO } from 'src/dto/customer.dto';
-import { CreateInventoryDTO } from 'src/dto/inventory.dto';
+import { CreateInventoryDTO, CustomerDTO } from 'src/dto';
 
 @Injectable()
 export class InventoryService {

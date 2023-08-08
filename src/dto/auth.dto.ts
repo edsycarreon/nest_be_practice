@@ -1,3 +1,4 @@
+import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class SignInAccountDTO {
@@ -35,3 +36,37 @@ export class RegisterAccountDTO {
   @IsString()
   inventoryName: string;
 }
+
+export class BaseAuthLoginDTO {
+  @IsString()
+  @ApiProperty()
+  apiKey: string;
+
+  @IsString()
+  @ApiProperty()
+  signature: string;
+
+  @IsString()
+  @ApiProperty()
+  token: string;
+
+  @IsString()
+  @ApiProperty()
+  name: string;
+
+  @IsNumber()
+  @ApiProperty()
+  expiresIn: number;
+}
+
+export class AuthLoginBodyDTO extends PickType(BaseAuthLoginDTO, [
+  'apiKey',
+  'signature',
+]) {}
+export class AuthLoginResponseDTO extends PickType(BaseAuthLoginDTO, [
+  'token',
+]) {}
+export class DecodedTokenDTO extends OmitType(BaseAuthLoginDTO, [
+  'token',
+  'signature',
+]) {}

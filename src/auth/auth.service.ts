@@ -2,12 +2,10 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Connection } from 'mysql2/promise';
 import { ApiResponse } from 'src/common/api-response';
 import { PG_CONNECTION } from 'src/constants/constants';
-import { RegisterAccountDTO, SignInAccountDTO } from 'src/dto/auth.dto';
 import { castToArray, comparePasswords, hashPassword } from 'src/utils';
-import { CustomerDTO } from 'src/dto/customer.dto';
-import { generateAccessToken } from 'src/utils/jwt.utils';
 import { JwtService } from '@nestjs/jwt';
 import { castSignInDTO } from 'src/common/casts/auth.cast';
+import { RegisterAccountDTO, SignInAccountDTO } from 'src/dto';
 
 @Injectable()
 export class AuthService {
@@ -61,7 +59,7 @@ export class AuthService {
           hashedPassword,
         );
         if (isPasswordMatched) {
-          const token = generateAccessToken(this.jwtService, {
+          const token = await this.jwtService.signAsync({
             user: res[0],
           });
 
@@ -73,12 +71,11 @@ export class AuthService {
         }
       }
     } catch (e) {
-      console.error('ERR', e);
       throw new HttpException(
-        new ApiResponse<CustomerDTO>(
+        new ApiResponse<any>(
           HttpStatus.INTERNAL_SERVER_ERROR,
           'Error logging in',
-          null,
+          e,
         ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

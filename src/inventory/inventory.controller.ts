@@ -1,10 +1,10 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { InventoryService } from './inventory.service';
 import { ApiResponse } from 'src/common/api-response';
 import { CreateInventoryDTO } from 'src/dto/inventory.dto';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { CustomerDTO } from 'src/dto/customer.dto';
+import { CurrentUser } from 'src/common/decorators';
 
 @ApiTags('inventory')
 @Controller('inventory')

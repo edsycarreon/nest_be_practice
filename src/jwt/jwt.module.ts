@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule as NestJwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../common/auth/strategies/jwt.strategy';
+import { Jwt } from 'src/utils';
 
 @Module({
   imports: [
